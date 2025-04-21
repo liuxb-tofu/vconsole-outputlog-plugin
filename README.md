@@ -1,3 +1,5 @@
+# 更新
+支持新版本vConsole导出日志
 # vconsole-outputlog-plugin
 依赖于[vConsole](https://github.com/Tencent/vConsole)
 使用该插件可以复制或下载console中打印的log
