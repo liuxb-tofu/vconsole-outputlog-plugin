@@ -1,5 +1,7 @@
-import copy from 'copy-to-clipboard';
- 
+import copy from "copy-to-clipboard";
+import VConsole from "vconsole";
+import stringify from "json-stringify-safe";
+
 class VConsoleOutputLogsPlugin {
   constructor(vConsole) {
     this.vConsole = vConsole;
@@ -9,14 +11,8 @@ class VConsoleOutputLogsPlugin {
   }
 
   init() {
-    const vConsoleExportLogs = new window.VConsole.VConsolePlugin(
-      "exportLog",
-      "exportLog"
-    );
-
-    vConsoleExportLogs.on("ready", () => {
-      console.log('[vConsole-exportlog-plugin] -- load');
-    });
+    const vConsoleExportLogs = new VConsole.VConsolePlugin("exportLog", "exportLog");
+    vConsoleExportLogs.on("init", () => {});
     vConsoleExportLogs.on("renderTab", (callback) => {
       const html = `<div class="vconsole-exportlog">
       </div>`;
@@ -39,35 +35,62 @@ class VConsoleOutputLogsPlugin {
     return vConsoleExportLogs;
   }
   funDownload = (content, filename) => {
-    var eleLink = document.createElement("a");
+    const eleLink = document.createElement("a");
     eleLink.download = filename;
     eleLink.style.display = "none";
-    var blob = new Blob([content]);
+    const blob = new Blob([content]);
     eleLink.href = URL.createObjectURL(blob);
     document.body.appendChild(eleLink);
     eleLink.click();
     document.body.removeChild(eleLink);
-  }
+  };
   export = () => {
-    let nodeArr = document.querySelectorAll(".vc-content .vc-log")[0].children
-    let _str = ''
-    for (let i = 0; i < nodeArr.length; i++) {
-      const ele = nodeArr[i];
-      _str+=`${ele.textContent}\n`
-    }
-    this.funDownload(_str,`${new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()}.log`)
+    const ctxArr = this.vConsole.pluginList.default.compInstance.$$.ctx;
+    const logList = ctxArr.filter((item) => item instanceof Array)[0];
+    let _str = "";
+    logList.forEach((item) => {
+      const timestamp = formatTimestampToHMSMs(item.date);
+      let _rowLog = `${timestamp} `;
+      item.data.forEach((logCell) => {
+        if (typeof logCell.origData === "string") {
+          _rowLog += `${logCell.origData} `;
+        } else {
+          _rowLog += `${stringify(logCell.origData)} `;
+        }
+      });
+      _str += `${_rowLog}\n`;
+    });
+    this.funDownload(_str, `${`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`}.log`);
   };
   copyText = () => {
-    let nodeArr = document.querySelectorAll(".vc-content .vc-log")[0].children
-    let _str = ''
-    for (let i = 0; i < nodeArr.length; i++) {
-      const ele = nodeArr[i];
-      _str+=`${ele.textContent}\n`
-    }
+    const ctxArr = this.vConsole.pluginList.default.compInstance.$$.ctx;
+    const logList = ctxArr.filter((item) => item instanceof Array)[0];
+    let _str = "";
+    logList.forEach((item) => {
+      const timestamp = formatTimestampToHMSMs(item.date);
+      let _rowLog = `${timestamp} `;
+      item.data.forEach((logCell) => {
+        if (typeof logCell.origData === "string") {
+          _rowLog += `${logCell.origData} `;
+        } else {
+          _rowLog += `${stringify(logCell.origData)} `;
+        }
+      });
+      _str += `${_rowLog}\n`;
+    });
     copy(_str);
   };
 }
 
-window.VConsoleOutputLogsPlugin = VConsoleOutputLogsPlugin;
+function formatTimestampToHMSMs(timestamp) {
+  const date = new Date(timestamp);
+
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+
+  return `${hours}:${minutes}:${seconds}:${milliseconds}`;
+}
 
 export default VConsoleOutputLogsPlugin;

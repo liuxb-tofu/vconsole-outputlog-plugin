@@ -1,6 +1,9 @@
 {
-  "name": "vconsole-outputlog-plugin",
-  "version": "0.3.0",
+  "name": "@liuxb001/vconsole-outputlog-plugin",
+  "version": "0.4.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "",
   "main": "dist/vconsole-outputlog-plugin.min.js",
   "scripts": {
@@ -9,7 +12,7 @@
   },
   "keywords": [],
   "author": "sunlanda <relaxto@qq.com>",
-  "homepage": "https://github.com/sunlanda/vconsole-outputlog-plugin",
+  "homepage": "https://github.com/liuxb-tofu/vconsole-outputlog-plugin",
   "license": "MIT",
   "dependencies": {
     "@babel/cli": "^7.7.5",
@@ -26,8 +29,9 @@
     "less-loader": "^5.0.0",
     "stats.js": "^0.17.0",
     "style-loader": "^0.13.1",
-    "vconsole": "^3.3.4",
-    "webpack": "^4.41.2"
+    "vconsole": "^3.15.1",
+    "webpack": "^4.41.2",
+    "json-stringify-safe": "^5.0.1"
   },
   "devDependencies": {
     "webpack-cli": "^4.3.1"
