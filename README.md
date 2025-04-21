@@ -9,7 +9,7 @@
 
 ## 安装
 ```
-npm install vconsole-outputlog-plugin
+npm i @liuxb001/vconsole-outputlog-plugin
 ```
 ## 引入
 
